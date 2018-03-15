@@ -42,7 +42,7 @@ class ElecteurController extends Controller
         $nom = $request->input("nom");
         $prenom = $request->input("prenom");
         $prenom_pere = $request->input("prenom_pere");
-        $prenom_grand_pere = $request->input("prenom_grand-pere");
+        $prenom_grand_pere = $request->input("prenom_grand_pere");
         $age = $request->input("age");
         $adresse = $request->input("adresse");
         $num_tel = $request->input("num_tel");
@@ -56,16 +56,24 @@ class ElecteurController extends Controller
         $remarque = $request->input("remarque");
 
         $electeur_id = $request->input("electeur_id");
-        $user_id = $request->input("user_id");
+        // $user_id = $request->input("user_id");
+        $user_id = $user->id;
 
-        // $latitude = $request->input('latitude');
-        // $longitude = $request->input('longitude');
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
 
         // Fill Information with Corresponded
 
-        if($electeur_id != null) {
+        //if($electeur_id != null) {
             // $electeur = DB::table('electeurs')->where('id', $electeur_id);
+        if(isset($electeur_id) && $electeur_id != null) {
             $electeur = Electeur::where('id', $electeur_id)->first();
+            $msg = "Electeur Modifié";
+        } else {
+            $electeur = new Electeur();
+            $msg = "Electeur ajouté";
+        }
+
             $electeur->nom = $nom;
             $electeur->prenom = $prenom;
             $electeur->prenom_pere = $prenom_pere;
@@ -84,12 +92,12 @@ class ElecteurController extends Controller
             if($electeur->save()){
                 $code = 200;
                 $array = [
-                    "msg" => "Electeur modifié",
+                    "msg" => $msg,
                     "data" => $electeur
                 ];
                 $electeur->User()->attach($user_id, [
-                    'location_lat' => '32.6666',
-                    'location_long' => '40.25698'
+                    'location_lat' => $latitude,
+                    'location_long' => $longitude
                 ]);
                 // Add the attach method to the Many-To-Many Relation, use [] to specify location_lat and location_long
             } else {
@@ -100,7 +108,7 @@ class ElecteurController extends Controller
             }
 
             return response()->json($array, $code);
-        } else {
+        /*} else {
             $electeur = new Electeur();
             $electeur->nom = $nom;
             $electeur->prenom = $prenom;
@@ -128,7 +136,7 @@ class ElecteurController extends Controller
                 return response()->json($array, 200);
             }
 
-        }
+        }*/
     }
 
     /**

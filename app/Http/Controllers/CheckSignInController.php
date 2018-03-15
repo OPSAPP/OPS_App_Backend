@@ -17,7 +17,7 @@ class CheckSignInController extends Controller
     public function index() {
         try {
             if(! $user = JWTAuth::parseToken()->authenticate()) {
-                return response()->json(['msq' => 'user undfined'], 401);
+                return response()->json(['msq' => 'user undefined'], 401);
             } else {
                 return response()->json(['msg' => 'user connected', 'user' => $user], 200);
             }
