@@ -22,6 +22,8 @@ class CreateUsersTable extends Migration
             $table->integer('age')->nullable();
             $table->string('role', 15);
             $table->integer('num_tel')->nullable();
+            $table->string('status', 255)->nullable();
+            $table->string('mission_id', 255)->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

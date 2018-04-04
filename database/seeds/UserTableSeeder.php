@@ -24,7 +24,7 @@ class UserTableSeeder extends Seeder
                 'prenom' => $prenomArray[$i],
                 'login' => $faker->userName(),
                 'password' => Hash::make('helloworld'),
-                'role' => 'agent',
+                'role' => 'admin',
                 'created_at' => $faker->dateTimeBetween('-7 days', '-6 days'),
                 'updated_at' => $faker->dateTimeBetween('-7 days', '-6 days')
             ]);
@@ -34,17 +34,18 @@ class UserTableSeeder extends Seeder
             $nom = $faker->lastName();
             $prenom = $faker->firstName();
             $login = $faker->userName();
-            $password = $faker->password();
+            // $password = Hash::make($faker->password());
             $date = $faker->dateTimeBetween('-7 days', '-6 days');
 
             $user = new User([
                 'nom' => $nom,
                 'prenom' => $prenom,
                 'login' => $login,
-                'password' => $password,
+                'password' => Hash::make('helloworld'),
                 'role' => 'agent',
                 'created_at' => $date,
-                'updated_at' => $date
+                'updated_at' => $date,
+                "status" => "disponible",
             ]);
             $user->save();
         }

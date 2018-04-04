@@ -95,7 +95,7 @@ class ElecteurController extends Controller
                     "msg" => $msg,
                     "data" => $electeur
                 ];
-                $electeur->User()->attach($user_id, [
+                $electeur->users()->attach($user_id, [
                     'location_lat' => $latitude,
                     'location_long' => $longitude
                 ]);

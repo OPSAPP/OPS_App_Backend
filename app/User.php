@@ -15,10 +15,18 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'nom', 'prenom', 'login', 'password', 'age', 'role', 'num_tel'
+        'nom', 'prenom', 'login', 'password', 'age', 'role', 'num_tel', 'status', 'mission_id'
     ];
-    public function Electeurs () {
+    public function electeurs () {
         return $this->belongsToMany('App\Electeur', 'user_electeur', 'user_id', 'electeur_id')->withTimestamps();
+    }
+
+    public function missions() {
+        return $this->belongsToMany('App\Mission', 'user_mission')->withTimestamps();
+    }
+
+    public function addMissions() {
+        return $this->hasMany('App\Mission');
     }
 
     /**

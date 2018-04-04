@@ -23,3 +23,4 @@ Route::resource('signIn', 'SignInController', [
 Route::resource('checkSignIn', 'CheckSignInController', [
     'only' => ['index']
 ]);
+Route::resource('missionControl', 'MissionController');
