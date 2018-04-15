@@ -7,6 +7,9 @@ use JWTAuth;
 use App\User;
 use App\Mission;
 use Carbon\Carbon;
+use DB;
+use App\Jobs\StartJob;
+use App\Jobs\EndJob;
 class MissionController extends Controller
 {
     public function __construct()
@@ -52,69 +55,59 @@ class MissionController extends Controller
         $end_year = $request->input('end_year');
         $end_hour = $request->input('end_hour');
         $end_minutes = $request->input('end_minutes');
+        $status = $request->input('status');
         $starts_at = Carbon::createFromFormat('Y-m-d H:i','' . $start_year .'-' .$start_month . '-' . $start_day_of_month. ' ' . $start_hour . ':' . $start_minutes . '');
         $ends_at = Carbon::create($end_year, $end_month, $end_day_of_month, $end_hour, $end_minutes, 0, 'Europe/London');
-        $userArray = $request->input('agents');
+        // $userArray = $request->input('agents');
         $mission = new Mission([
            "title" => $title,
            "description" => $description,
            "starts_at" => $starts_at,
-           "ends_at" => $ends_at
+           "ends_at" => $ends_at,
+            'status' => $status
         ]);
-            if($user->addMissions()->save($mission)) {
-                $approvedUsers = [];
-                foreach ($userArray as $elem) {
-                    $reqUser = User::find($elem["user_id"]);
-                    if ($reqUser->status == 'disponible') {
-                        $reqUser->status = "occupé";
-                        $reqUser->mission_id = $mission->id;
-                        if($reqUser->save()) {
-                            $mission->users()->attach($reqUser->id);
-                            $approvedUsers[] = $reqUser;
-                        }
-                    } else {
-                        $declinedUsers[] = $reqUser;
-                    }
-                }
-                if(sizeof($approvedUsers) > 0){
-                    $rsp = [
-                        "msg" => "Mission Added",
-                        "data" => [
-                            "missionData" => $mission,
-                            "approvedUsers" => $approvedUsers,
-                            "declinedUsers" => $declinedUsers
-                        ]
-                    ];
-                    return response()->json($rsp, 200);
-                } else {
+        if ($this->isMissionValid($mission)) {
+            if ($user->addMissions()->save($mission)) {
+                $startTimestamp = strtotime($mission->starts_at) - strtotime(date('Y-m-d H:i:s'));
+                $endTimestamp = strtotime($mission->ends_at) - strtotime(date('Y-m-d H:i:s'));
+                $array = [
+                    "msg" => "Mission Added",
+                    "data" => $mission,
+                    "start" => $startTimestamp,
+                    "end" => $endTimestamp
+                ];
+                $startJob = (new StartJob($mission))->delay($startTimestamp);
+                $endJob = (new EndJob($mission))->delay($endTimestamp);
 
-                    try {
-                        $mission->delete();
-                        $rsp = [
-                            "msg" => "Mission not Added, there is no Available Agents"
-                        ];
-                        return response()->json($rsp, 404);
-                    } catch (\Exception $e) {
-
-                    }
-
-
-                }
+                dispatch($startJob);
+                dispatch($endJob);
+                return response()->json($array, 200);
+            } else {
+                return response()->json(["msg" => "Mission non ajoutée"], 404);
             }
-
-
-        /*
-            This method wil analyse the agent id and get the Available agents to match them with the correspondent Mission.
-            If An Error Occur, The Agent in Question will be sent to the Fail Object and a Message will be Displayed in the Front End.
-
-            The User Model must be updated with a two new attributes: status and current_mission :
-            status will take two possible values : 'disponible' or ' occupe'
-            current_mission wil take the id of the Current affected mission
-            A User Controller must be added in order to fetch the User Data to get the Current Mission
-        */
+        } else {
+            return response()->json(["msg" => "Mission non ajoutée"], 404);
+        }
 
     }
 
+    public function isMissionValid($mission) {
+        $missionsResult = DB::table('missions')
+            ->where([
+                ["starts_at", ">", $mission->starts_at],
+                ["starts_at", "<", $mission->ends_at],
+                ["ends_at", ">", $mission->starts_at],
+                ["ends_at", "<", $mission->ends_at]
+            ])
+            ->orWhereBetween("starts_at", [$mission->starts_at, $mission->ends_at])
+            ->orWhereBetween("ends_at", [$mission->starts_at, $mission->ends_at])
+            ->get();
+        if (sizeof(json_decode(json_encode($missionsResult))) != 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     /**
      * Display the specified resource.
      *

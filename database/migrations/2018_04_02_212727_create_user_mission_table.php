@@ -17,7 +17,9 @@ class CreateUserMissionTable extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->integer('user_id');
-            $table->integer('mission_id');
+            // $table->integer('mission_id');
+            $table->string('location_lat', 255)->nullable();
+            $table->string('location_long', 255)->nullable();
 
         });
     }

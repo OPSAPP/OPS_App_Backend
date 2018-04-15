@@ -24,3 +24,9 @@ Route::resource('checkSignIn', 'CheckSignInController', [
     'only' => ['index']
 ]);
 Route::resource('missionControl', 'MissionController');
+Route::resource('filteredElecteur', 'FilteredElecteurController', [
+    'only' => ['store']
+]);
+Route::resource('getFormsLocations', 'FormsLocationsController', [
+    "only" => ['index']
+]);

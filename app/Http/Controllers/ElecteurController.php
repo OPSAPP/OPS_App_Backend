@@ -10,7 +10,7 @@ class ElecteurController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('jwt.auth', ['only' => 'store']);
+        $this->middleware('jwt.auth', ['only' => ['store']]);
     }
 
     /**
@@ -20,11 +20,14 @@ class ElecteurController extends Controller
      */
     public function index()
     {
-        $data = Electeur::all();
-        $array = [
-            "data" => $data
-        ];
-        return response()->json($data, 200);
+        /*if(! $user = JWTAuth::parseToken()->authenticate()) {
+            return response()->json(['msg' => 'User Not Found'], 404);
+        }*/
+        //if($user->role === 'admin') {
+            $data = Electeur::all();
+            return response()->json($data, 200);
+        //}
+
     }
 
 
@@ -37,7 +40,7 @@ class ElecteurController extends Controller
     public function store(Request $request)
     {
         if(! $user = JWTAuth::parseToken()->authenticate()) {
-           return response()->json(['msq' => 'User Not Found'], 404);
+           return response()->json(['msg' => 'User Not Found'], 404);
         }
         $nom = $request->input("nom");
         $prenom = $request->input("prenom");

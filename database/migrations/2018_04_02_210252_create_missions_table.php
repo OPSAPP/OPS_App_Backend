@@ -20,6 +20,7 @@ class CreateMissionsTable extends Migration
             $table->string('description', 255);
             $table->dateTime('starts_at');
             $table->dateTime('ends_at');
+            $table->string('status', 255);
             $table->integer('user_id');
         });
     }
