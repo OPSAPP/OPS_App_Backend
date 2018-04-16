@@ -30,3 +30,7 @@ Route::resource('filteredElecteur', 'FilteredElecteurController', [
 Route::resource('getFormsLocations', 'FormsLocationsController', [
     "only" => ['index']
 ]);
+
+Route::resource('getAgentsPerMission', 'AgentsPerMissionController', [
+    "only" => ['store']
+]);

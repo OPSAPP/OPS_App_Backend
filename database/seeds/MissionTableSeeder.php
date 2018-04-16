@@ -20,7 +20,7 @@ class MissionTableSeeder extends Seeder
             $description = $faker->sentence(6);
             $date = $faker->dateTimeBetween('-5 days', '-4 days');
             $starts_at = Carbon::createFromTimestamp($faker->dateTimeBetween('-4 days', '-2 days')->getTimestamp());
-            $ends_at = Carbon::createFromFormat('Y-m-d H:i:s', $starts_at)->addMinutes(10);
+            $ends_at = Carbon::createFromFormat('Y-m-d H:i:s', $starts_at)->addHours(2);
             $status = $faker->randomElement($array);
             $user_id = $faker->numberBetween(1, 3);
 
