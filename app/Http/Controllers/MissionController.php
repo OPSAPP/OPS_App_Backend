@@ -14,7 +14,7 @@ class MissionController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('jwt.auth', ["only" => ['index', 'store']]);
+        $this->middleware('jwt.auth', ["only" => ['index', 'store', 'update', 'destroy']]);
     }
 
     /**
@@ -57,7 +57,7 @@ class MissionController extends Controller
         $end_minutes = $request->input('end_minutes');
         $status = $request->input('status');
         $starts_at = Carbon::createFromFormat('Y-m-d H:i','' . $start_year .'-' .$start_month . '-' . $start_day_of_month. ' ' . $start_hour . ':' . $start_minutes . '');
-        $ends_at = Carbon::create($end_year, $end_month, $end_day_of_month, $end_hour, $end_minutes, 0, 'Europe/London');
+        $ends_at = Carbon::create($end_year, $end_month, $end_day_of_month, $end_hour, $end_minutes);
         // $userArray = $request->input('agents');
         $mission = new Mission([
            "title" => $title,
@@ -66,10 +66,12 @@ class MissionController extends Controller
            "ends_at" => $ends_at,
             'status' => $status
         ]);
+        // echo (strtotime($mission->starts_at) - strtotime(date('Y-m-d H:i'))) .'   ' . strtotime(date('Y-m-d H:i'));
+        // echo strtotime($starts_at->format('Y-m-d H:i'));
         if ($this->isMissionValid($mission)) {
             if ($user->addMissions()->save($mission)) {
-                $startTimestamp = strtotime($mission->starts_at) - strtotime(date('Y-m-d H:i:s'));
-                $endTimestamp = strtotime($mission->ends_at) - strtotime(date('Y-m-d H:i:s'));
+                $startTimestamp = strtotime($mission->starts_at) - strtotime($mission->created_at);
+                $endTimestamp = strtotime($mission->ends_at) - strtotime($mission->created_at);
                 $array = [
                     "msg" => "Mission Added",
                     "data" => $mission,
@@ -128,17 +130,78 @@ class MissionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        if((! $user = JWTAuth::parseToken()->authenticate()) || $user->role != 'admin') {
+            return response()->json(['msq' => 'User Not Found'], 404);
+        }
+        $mission = (new Mission())->find($id);
+        if ($mission->status === 'planifiée' && $mission->user_id === $user->id) {
+            $title = $request->input('title');
+            $description = $request->input('description');
+            /*$start_day_of_month = $request->input('start_day_of_month');
+            $start_month = $request->input('start_month');
+            $start_year = $request->input('start_year');
+            $start_hour = $request->input('start_hour');
+            $start_minutes = $request->input("start_minutes");
+            $end_day_of_month = $request->input('end_day_of_month');
+            $end_month = $request->input('end_month');
+            $end_year = $request->input('end_year');
+            $end_hour = $request->input('end_hour');
+            $end_minutes = $request->input('end_minutes');
+            $status = $request->input('status');
+            $starts_at = Carbon::createFromFormat('Y-m-d H:i','' . $start_year .'-' .$start_month . '-' . $start_day_of_month. ' ' . $start_hour . ':' . $start_minutes . '');
+            $ends_at = Carbon::create($end_year, $end_month, $end_day_of_month, $end_hour, $end_minutes, 0);*/
+
+            if ($mission->update([
+                'title' => $title,
+                'description' => $description,
+                /*'starts_at' => $starts_at,
+                'ends_at' => $ends_at,
+                'status' => $status*/
+            ])) {
+                $array = [
+                    "msg" => "Mission modifiée"
+                ];
+                /*$startTimestamp = strtotime($mission->starts_at) - strtotime($mission->updated_at);
+                $endTimestamp = strtotime($mission->ends_at) - strtotime($mission->updated_at);
+                $array = [
+                    "msg" => "Mission Added",
+                    "data" => $mission,
+                    "start" => $startTimestamp,
+                    "end" => $endTimestamp
+                ];
+                $startJob = (new StartJob($mission))->delay($startTimestamp);
+                $endJob = (new EndJob($mission))->delay($endTimestamp);
+
+                dispatch($startJob);
+                dispatch($endJob);*/
+                return response()->json($array, 200);
+            }
+
+        } else {
+            $array = [
+                "msg" => "Erreur dans la mise à jour de la Mission, vérifiez l'état"
+            ];
+            return response()->json($array, 404);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function destroy($id)
     {
-        //
+        if((! $user = JWTAuth::parseToken()->authenticate()) || $user->role != 'admin') {
+            return response()->json(['msq' => 'User Not Found'], 404);
+        }
+        $mission = (new Mission())->find($id);
+        if ($mission->delete()) {
+            return response()->json(["msg" => "Mission Deleted"], 200);
+        } else {
+            return response()->json(['msg' => 'Error'], 404);
+        }
     }
 }

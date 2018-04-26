@@ -15,22 +15,59 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::resource('electeurs', 'ElecteurController', [
-    'only' => ['store', 'index', 'show']
+    'only' => ['store', 'index', 'show', 'update']
 ]);
-Route::resource('signIn', 'SignInController', [
+/*Route::resource('signIn', 'SignInController', [
     'only' => ['store']
 ]);
 Route::resource('checkSignIn', 'CheckSignInController', [
     'only' => ['index']
-]);
+]);*/
 Route::resource('missionControl', 'MissionController');
-Route::resource('filteredElecteur', 'FilteredElecteurController', [
+/*Route::resource('filteredElecteur', 'FilteredElecteurController', [
     'only' => ['store']
-]);
-Route::resource('getFormsLocations', 'FormsLocationsController', [
+]);*/
+/*Route::resource('getFormsLocations', 'FormsLocationsController', [
     "only" => ['index']
+]);*/
+Route::get('formsLocations', [
+    "uses" => 'UserElecteurController@getFormsLocations',
+    "as" => "formsLocations"
+]);
+Route::post('agentsPerMission', [
+    "uses" => "UserMissionController@getAgentsPerMission",
+    "as" => "agentsPerMission"
+]);
+Route::post('/addLocation', [
+    "uses" => "UserMissionController@addLocation",
+    "as" => "addLocation"
+]);
+/*Route::resource('getAgentsPerMission', 'AgentsPerMissionController', [
+    "only" => ['store']
+]);*/
+Route::post('/signIn', [
+    "uses" => "AuthentificationController@signIn",
+    "as" => "signIn"
+]);
+Route::get('/checkSignIn', [
+    "uses" => "AuthentificationController@checkSignIn",
+    "as" => "checkSignIn"
 ]);
 
-Route::resource('getAgentsPerMission', 'AgentsPerMissionController', [
-    "only" => ['store']
+Route::get('getAgents', [
+    "uses" => "AgentsController@getAgents",
+    "as" => "getAgents"
+]);
+Route::post('addAgent', [
+    "uses" => "AgentsController@addAgent",
+    "as" => "addAgent"
+]);
+Route::get('getAgent/{id}', [
+    "uses" => "AgentsController@getAgentById",
+    "as" => "getAgent"
+]);
+
+Route::put('updateAgent/{id}', [
+    "uses" => "AgentsController@updateAgent",
+    "as" => "updateAgent"
 ]);

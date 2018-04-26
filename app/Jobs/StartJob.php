@@ -33,7 +33,11 @@ class StartJob implements ShouldQueue
      */
     public function handle()
     {
-        if($this->mission->starts_at == date('Y-m-d H:i:s')) {
+        /*if($this->mission->starts_at->format('Y-m-d H:i') == date('Y-m-d H:i')) {
+            $this->mission->status = "en cours";
+            $this->mission->save();
+        }*/
+        if ((strtotime($this->mission->starts_at) - (strtotime($this->mission->starts_at) - strtotime($this->mission->updated_at))) == strtotime($this->mission->updated_at)) {
             $this->mission->status = "en cours";
             $this->mission->save();
         }

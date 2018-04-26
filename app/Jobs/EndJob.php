@@ -31,7 +31,11 @@ class EndJob implements ShouldQueue
      */
     public function handle()
     {
-        if($this->mission->ends_at == date('Y-m-d H:i:s')) {
+        /* if($this->mission->ends_at->format('Y-m-d H:i') == date('Y-m-d H:i')) {
+            $this->mission->status = "terminée";
+            $this->mission->save();
+        }*/
+        if ((strtotime($this->mission->ends_at) - (strtotime($this->mission->ends_at) - strtotime($this->mission->updated_at))) == strtotime($this->mission->updated_at)) {
             $this->mission->status = "terminée";
             $this->mission->save();
         }

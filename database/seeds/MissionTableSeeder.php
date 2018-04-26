@@ -14,7 +14,7 @@ class MissionTableSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-        $array = ["plainifiée", "en cours", "terminée"];
+        $array = ["planifiée", "en cours", "terminée"];
         for ($i = 0; $i < 10; $i++) {
             $title = $faker->words(1, true);
             $description = $faker->sentence(6);
