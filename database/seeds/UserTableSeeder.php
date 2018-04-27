@@ -13,11 +13,28 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
-        $faker = Faker::create();
+        $user = new User([
+            'nom' => 'Machkena',
+            "prenom" => "Zied",
+            "login" => "zied.machkena",
+            "password" => Hash::make('opsappAdmin'),
+            "role" => "admin"
+        ]);
+        $user->save();
+
+        $user1 = new User([
+            'nom' => 'Bouslama',
+            'prenom' => 'Bahaeddine',
+            'login' => 'bahaeddine.bouslama',
+            "password" => Hash::make('opsappAdmin'),
+            "role" => "admin"
+        ]);
+        $user1->save();
+        /*$faker = Faker::create();
         $nomArray = array('Machkena', 'Boulabiar', 'Bouslama');
         $prenomArray = array('Zied', 'Marwen', 'Bahaeddine');
 
-        // for Adding Admins
+
         for($i = 0; $i < 3; $i++) {
             $user = new User([
                 'nom' => $nomArray[$i],
@@ -48,6 +65,6 @@ class UserTableSeeder extends Seeder
                 "status" => "disponible",
             ]);
             $user->save();
-        }
+        }*/
     }
 }
