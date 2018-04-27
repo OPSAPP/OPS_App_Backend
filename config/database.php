@@ -49,6 +49,10 @@ return [
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
+            'sslmode' => env('DB_SSLMODE', 'prefer'),
+            'options' => (env('MYSQL_SSL')) ? [
+                PDO::MYSQL_ATTR_SSL_KEY    => '/ssl/4d34ea92764b3a3149119952f41930ca11348361.pem',
+            ] : [],
             'prefix' => '',
             'strict' => true,
             'engine' => null,
