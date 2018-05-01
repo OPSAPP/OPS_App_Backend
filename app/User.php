@@ -29,6 +29,10 @@ class User extends Authenticatable
         return $this->hasMany('App\Mission');
     }
 
+    public function locations() {
+        return $this->belongsToMany('App\Location', 'user_location', 'user_id', 'location_id')->withTimestamps();
+    }
+
     /**
      * The attributes that should be hidden for arrays.
      *

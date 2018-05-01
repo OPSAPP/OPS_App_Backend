@@ -13,7 +13,9 @@ class UserTableSeeder extends Seeder
      */
     public function run()
     {
-        $user = new User([
+
+        // ***********PROD DATABASE*************
+        /*$user = new User([
             'nom' => 'Machkena',
             "prenom" => "Zied",
             "login" => "zied.machkena",
@@ -30,7 +32,19 @@ class UserTableSeeder extends Seeder
             "role" => "admin"
         ]);
         $user1->save();
-        /*$faker = Faker::create();
+
+        $user2 = new User([
+            'nom' => 'Bouslama',
+            'prenom' => 'Bahaeddine',
+            'login' => 'bouslama.bahaeddine',
+            "password" => Hash::make('opsappAgent'),
+            'role' => 'agent'
+        ]);
+        $user2->save();*/
+        // ***********PROD DATABASE*************
+
+
+        $faker = Faker::create();
         $nomArray = array('Machkena', 'Boulabiar', 'Bouslama');
         $prenomArray = array('Zied', 'Marwen', 'Bahaeddine');
 
@@ -65,6 +79,6 @@ class UserTableSeeder extends Seeder
                 "status" => "disponible",
             ]);
             $user->save();
-        }*/
+        }
     }
 }

@@ -71,3 +71,7 @@ Route::put('updateAgent/{id}', [
     "uses" => "AgentsController@updateAgent",
     "as" => "updateAgent"
 ]);
+Route::post('submitLocation', [
+    "uses" => "UserLocationController@submitLocation",
+    "as" => "submitLocation"
+]);
