@@ -15,11 +15,11 @@ class UserTableSeeder extends Seeder
     {
 
         // ***********PROD DATABASE*************
-        /*$user = new User([
+        $user = new User([
             'nom' => 'Machkena',
             "prenom" => "Zied",
             "login" => "zied.machkena",
-            "password" => Hash::make('opsappAdmin'),
+            "password" => Hash::make('opsappAdmin2018'),
             "role" => "admin"
         ]);
         $user->save();
@@ -33,7 +33,7 @@ class UserTableSeeder extends Seeder
         ]);
         $user1->save();
 
-        $user2 = new User([
+        /*$user2 = new User([
             'nom' => 'Bouslama',
             'prenom' => 'Bahaeddine',
             'login' => 'bouslama.bahaeddine',
@@ -44,7 +44,7 @@ class UserTableSeeder extends Seeder
         // ***********PROD DATABASE*************
 
 
-        $faker = Faker::create();
+        /*$faker = Faker::create();
         $nomArray = array('Machkena', 'Boulabiar', 'Bouslama');
         $prenomArray = array('Zied', 'Marwen', 'Bahaeddine');
 
@@ -79,6 +79,6 @@ class UserTableSeeder extends Seeder
                 "status" => "disponible",
             ]);
             $user->save();
-        }
+        }*/
     }
 }
